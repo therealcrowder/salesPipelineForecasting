@@ -1,0 +1,138 @@
+---
+title: "Sales Pipeline Overview"
+author: "Mike Crowder"
+date: "3/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Business to business (B2B) sales data has thus far been neglected in the machine learning revlolution over the past 5 years. B2B sales teams hold one of the greatest responsibilities in moder global business. They hold the key to the relationship to their largest customers. Our goal here in this section is to look at the pipeline and data and understand it.
+
+### Is Sales an Art or a Science?
+
+Sales is neither an art or a science, but a process that can be managed just like any other business process. Their are many moving parts to not only an indvidual deal, but take that deal and multiple it by a few thousand over global territories and cultures you have the modern large global sales force.
+
+With a proper customer relationship managment (CRM) system companies can collect millions of data points. That's just what is in the CRM system. Now companies have the ability to monitor sales calls with video through meeting software and voice, now giving us billions of data points. Sales needs the attention of your analytics or data science department.
+
+### About the data
+
+This dataset is sample data from [IBM's Watson Analytics](https://www.ibm.com/communities/analytics/watson-analytics-blog/sales-win-loss-sample-dataset/). The data is from a CRM system that has been run through a process to make it somewhat model ready for analysis. The purpose of the data is to discover patterns with sales wins and losses. This could allow a Sales Operations team to communicate to executive leadership what factors contribute to winning and losing. That allows the orgainization to be proactive and possibly change the outcome.
+
+This is a flat file that you could get out of a relational database through a data warehouse. Let's take a look at the data.
+```{r tidy = TRUE}
+pipeline <- read.csv("pipelineAnalytics.csv")
+head(pipeline)
+```
+```{r}
+dim(pipeline)
+```
+
+The pipeline data is 78K rows with 19 variables. Let's explore some of the variables. Opp is short for opportunity.
+
+| Variable | Data Type | Description |
+| ------------- |:-------------:| -----:|
+| Opportunity Number | Integer | Unique indentifier some opps may have mutliple products|
+| Supplies Subgroup | Factor | Product subgroup |
+| Supplies Group | Factor | Product grouping |
+| Region | Factor | Business region in which opp was sold |
+| Route to Market | Factor | The channel in which owns the opp |
+| Elapsed Days In Sales Stage | Integer | The number of days an opp has been in the sales stage |
+| Opportunity Result | Factor | Tells if the opp was won or lost |
+| Sales Stage Change Count | Factor | How many times has the stage name changed |
+| Total Days Identified Through Closing | Integer | The age of an opp |
+| Total.Days.Identified.Through.Qualified | Integer | How long it took in days to qualify an opp |
+| Opportunity Amount USD | Integer | The revenue over a 12 month period the opp repersents |
+| Client Size By Revenue | Integer | Client size by the clients yearly revenue |
+| Client Size by Employee Count | Integer | Client size by the number of employees |
+| Revenue From Client Past Two Years | Integer | Client spend past two years |
+| Competitor Type | Factor | Indicator if a competitor has been identified |
+| Ratio Days Identified To Total Days | Integer | Ratio of total days the opportunity has spent in sales stage: Identified/Validating over total days in sales process |
+| Ratio Days Validated To Total.Days | Integer | Ratio of total days the Opportunity has presence in sales stage: Validated/Qualifying over total days in sales process |
+| Ratio Days Qualified To Total Days | Integer | Qualified/Gaining Agreement over total days in sales process |
+| Deal Size Category | Integer | Categorical size of the opportunity size |
+
+### Analysis Overview
+
+Lets visualize some of this information to do this we are going to use ggplot.
+
+```{r}
+library(ggplot2)
+theme_set(theme_linedraw())
+options(scipen = 999)
+```
+
+```{r tidy = TRUE}
+w <- ggplot(pipeline, aes(Route.To.Market))
+w + geom_bar(width = 0.6, fill = "coral") +
+  labs(title = "Number of Opps By Sales Channel",
+      subtitle = "Route to Market",
+      caption = "Source: IBM Watson Win Loss Analysis dataset",
+      y = "Number of Opps",
+      x = "Sales Channel") +
+  theme(axis.text.x = element_text(angle = 65, vjust = 0.6))
+```
+```{r tidy = TRUE}
+table(pipeline$Route.To.Market)
+```
+Most of the opportunties come from field sales and the reseller channel.
+
+```{r tidy = TRUE}
+w1 <- ggplot(pipeline, aes(x = Route.To.Market, y = Opportunity.Amount.USD))
+w1 + geom_bar(stat = "identity", width = 0.6, fill = "coral") +
+  labs(title = "Total Opportunity $ By Sales Channel",
+      subtitle = "Route to Market",
+      caption = "Source: IBM Watson Win Loss Analysis dataset",
+      y = "USD",
+      x = "Sales Channel") +
+  scale_y_continuous(labels = scales::dollar) +
+  theme(axis.text.x = element_text(angle = 65, vjust = 0.6))
+```
+```{r tidy=TRUE}
+tapply(pipeline$Opportunity.Amount.USD, pipeline$Route.To.Market, FUN = sum)
+```
+
+This is a pretty large dollar value of pipeline. The total pipeline for this sample for field sales for example is 4.7 billion dollars. The reseller channel is worth 1.95B billion dollars. This looks like a typically B2B pipeline in that our field sales generate the most opportunity while we have other channels that might and this is a guess that smaller opportunties are managed by Resellers. Let's check that guess.
+
+
+```{r tidy = TRUE}
+rtmTBL <- table(pipeline$Route.To.Market, pipeline$Client.Size.By.Revenue)
+rtmTBL
+```
+
+```{r tidy = TRUE}
+prop.table(rtmTBL, 1)
+```
+
+The relationship is not with Client Size By Revenue.
+
+```{r tidy = TRUE}
+cltTBL <- table(pipeline$Route.To.Market, pipeline$Revenue.From.Client.Past.Two.Years)
+cltTBL
+```
+
+```{r tidy = TRUE}
+prop.table(cltTBL, 1)
+```
+
+Nor is it by spend...
+```{r tidy = TRUE}
+oppTBL <- table(pipeline$Route.To.Market, pipeline$Deal.Size.Category)
+oppTBL
+```
+
+```{r tidy = TRUE}
+prop.table(oppTBL, 1)
+```
+
+It looks like there is some relationship between the channel and how large the opportunity is. Not enough information to go off of since we could have a global business and they use resellers even with large opportunities. It would appear that telesales is used for smaller opportunties.
+
+### Basic Sales Metrics
+
+Here we are going to take a look at some basic sales metrics like Close Rate and time to close. Lets start with Close Rates.
+
+#### Close Rates
+
+Close Rates in sales is very important. Its often how we start a basic forecast in B2B sales. Close rate is simple the number of opportuntiies sold or won divided by the total number of opportunties.
