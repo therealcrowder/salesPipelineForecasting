@@ -11,7 +11,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Business to business (B2B) sales data has thus far been neglected in the machine learning revlolution over the past 5 years. B2B sales teams hold one of the greatest responsibilities in moder global business. They hold the key to the relationship to their largest customers. Our goal here in this section is to look at the pipeline and data and understand it.
+Business to business (B2B) sales data has thus far been neglected in the machine learning revlolution over the past 5 years. B2B sales teams hold one of the greatest responsibilities in modern global business. The B2B sales force holds the key to the relationships to their largest customers. Our goal here in this section is to look at the pipeline and data and understand it.
 
 ### Is Sales an Art or a Science?
 
@@ -26,7 +26,7 @@ This dataset is sample data from [IBM's Watson Analytics](https://www.ibm.com/co
 This is a flat file that you could get out of a relational database through a data warehouse. Let's take a look at the data.
 ```{r tidy = TRUE}
 pipeline <- read.csv("pipelineAnalytics.csv")
-head(pipeline)
+#head(pipeline)
 ```
 ```{r}
 dim(pipeline)
@@ -138,3 +138,48 @@ Here we are going to take a look at some basic sales metrics like Close Rate and
 #### Close Rates
 
 Close Rates in sales is very important. Its often how we start a basic forecast in B2B sales. Close rate is simple the number of opportuntiies sold or won divided by the total number of opportunties.
+
+We can also evaluate the preformance of some types of sales resources with Close Rates. Take Close Rates with a grain of salt when you are evaluating sales resources that work large complex opportunties. They work very well when we look at a segment of a sales team or business unit.
+
+Let's take a look at close rates by opportunity size. This is a breakdown of opportuntiy size based on the source data.
+
+| Value | Bin Size |
+| ------------- |:-------------:|
+| 1 | < $10K |
+| 2 | $10K - \$25K |
+| 3 | $25K - \$50K |
+| 4 | $50K - \$100K |
+| 5 | $100K - \$250K |
+| 6 | $250K - \$500K |
+| 7 | > $500K |
+
+```{r tidy = TRUE}
+DScloseRateTBL <- table(pipeline$Opportunity.Result, pipeline$Deal.Size.Category)
+DScloseRateTBL
+```
+
+```{r tidy = TRUE}
+prop.table(DScloseRateTBL, 2)
+```
+
+```{r tidy = TRUE}
+DScloseRateDF <- as.data.frame(prop.table(DScloseRateTBL, 2))
+colnames(DScloseRateDF) <- c("Outcome", "OppBinSize", "CloseLostRate")
+```
+```{r tidy = TRUE}
+dscrBar <- ggplot() + geom_bar(aes(y = DScloseRateDF$CloseLostRate, 
+  x = DScloseRateDF$OppBinSize, fill = DScloseRateDF$Outcome), 
+  data = DScloseRateDF, stat = "identity") +
+  labs(title = "Close and Lost Rate By Opp Bin Size",
+      subtitle = "Opp Size Increases as Bin Number Increases",
+      caption = "Source: IBM Watson Win Loss Analysis dataset",
+      y = "Close Lost %",
+      x = "Opportunity Bin Size") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(legend.position = "bottom", legend.title = element_blank())
+dscrBar
+```
+
+From the Close and Lost Rate chart we can see as opportuntiy size increases the close rate decreases. Which is what happens at most sales orgs. We can see that most of the opportunties are in the bin size groupings of 4 and 5. This also happens to be the lowest close rates.
+
+Now this is a combined sales force with resellers, telesales, etc. We could break continue to break this down, but that is what we have advanced analytics for. Let's take a look at this data from a data science prospective in the next section.
