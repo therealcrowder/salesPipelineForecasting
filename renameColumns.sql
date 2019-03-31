@@ -1,0 +1,18 @@
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Opportunity Number`  Opp_Num VARCHAR(255);
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Supplies Subgroup`  Prod_Subgroup VARCHAR(255);
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Supplies Group`  Prod_Group VARCHAR(255);
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Route To Market`  Channel VARCHAR(255);
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Elapsed Days In Sales Stage`  Stage_Duration INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Opportunity Result`  Result VARCHAR(255);
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Sales Stage Change Count`  Stage_Changes INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Total Days Identified Through Closing`  Days_To_Close INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Total Days Identified Through Qualified`  Days_To_Qual INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Opportunity Amount USD`  Opp_NetRev INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Client Size By Revenue` Client_Size_Bin INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Client Size By Employee Count` Client_Emp_Size_Bin INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Revenue From Client Past Two Years` Two_Year_Spend INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Competitor Type`  Competitor_Type VARCHAR(255);
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Identified To Total Days` Ind_Days_Ratio INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Validated To Total Days` Val_Days_Ratio INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Qualified To Total Days` Qual_Days_Ratio INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Deal Size Category` Deal_Size_Bin INT;
