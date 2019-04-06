@@ -7,7 +7,6 @@ SELECT DISTINCT
 	pa.Opp_Num,
     pa.Channel,
     pa.Region,
-    pa.Prod_Group,
     CASE 
 		WHEN 
 			pa.Prod_Group = 'Car Accessories'
@@ -31,7 +30,34 @@ SELECT DISTINCT
 			pa.Prod_Group = 'Car Electronics'
 			THEN 1 
             ELSE 0
-	END AS							'IsCarElectronics'
+	END AS							'IsCarElectronics',
+    CASE 
+		WHEN 
+			pa.Channel = 'Fields Sales'
+			THEN 1 
+            ELSE 0
+	END AS							'IsFieldsSales',
+    CASE 
+		WHEN 
+			pa.Channel = 'Reseller'
+			THEN 1 
+            ELSE 0
+	END AS							'IsReseller',
+    CASE 
+		WHEN 
+			pa.Channel = 'Telesales'
+			THEN 1 
+		WHEN
+			pa.Channel = 'Telecoverage'
+            THEN 1
+            ELSE 0
+	END AS							'IsInsideSalesTeam',
+    CASE 
+		WHEN 
+			pa.Channel = 'Other'
+			THEN 1 
+            ELSE 0
+	END AS							'IsOtherSeller'
     
 FROM
 	pipeline_analysis.pipelineanalytics as pa
