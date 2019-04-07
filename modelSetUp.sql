@@ -1,8 +1,8 @@
 /* 	SQL Script for model build 
 		bult by Mike Crowder
         Last Modified on: 4/6/2019
-        Still a work in progress*/
-
+        */
+CREATE TABLE pipelineModel
 SELECT DISTINCT
 	pa.Opp_Num,
     pa.Channel,
@@ -57,7 +57,38 @@ SELECT DISTINCT
 			pa.Channel = 'Other'
 			THEN 1 
             ELSE 0
-	END AS							'IsOtherSeller'
+	END AS							'IsOtherSeller',
+    pa.Stage_Duration,
+    pa.Stage_Changes,
+    pa.Days_To_Close,
+    pa.Days_To_Qual,
+    pa.Opp_NetRev,
+    pa.Deal_Size_Bin,
+    pa.Client_Size_Bin,
+    pa.Client_Emp_Size_Bin,
+    pa.Two_Year_Spend,
+    CASE
+		WHEN
+			pa.Competitor_Type = 'Known'
+            THEN 1
+            ELSE 0
+	END AS						'IsCompKnown',
+     CASE
+		WHEN
+			pa.Competitor_Type = 'Unknown'
+            THEN 1
+            ELSE 0
+	END AS						'IsCompUnknown',
+    pa.Ind_Days_Ratio,
+    pa.Val_Days_Ratio,
+    pa.Qual_Days_Ratio,
+    pa.Result,
+    CASE
+		WHEN
+			pa.Result = 'Won'
+			THEN 1
+			ELSE 0
+	END AS						'IsWon'
     
 FROM
 	pipeline_analysis.pipelineanalytics as pa

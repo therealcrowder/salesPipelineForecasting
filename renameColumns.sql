@@ -12,7 +12,7 @@ ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Client Size By Revenue` 
 ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Client Size By Employee Count` Client_Emp_Size_Bin INT;
 ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Revenue From Client Past Two Years` Two_Year_Spend INT;
 ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Competitor Type`  Competitor_Type VARCHAR(255);
-ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Identified To Total Days` Ind_Days_Ratio INT;
-ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Validated To Total Days` Val_Days_Ratio INT;
-ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Qualified To Total Days` Qual_Days_Ratio INT;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Identified To Total Days` Ind_Days_Ratio DOUBLE;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Validated To Total Days` Val_Days_Ratio DOUBLE;
+ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Ratio Days Qualified To Total Days` Qual_Days_Ratio DOUBLE;
 ALTER TABLE pipeline_analysis.pipelineanalytics CHANGE `Deal Size Category` Deal_Size_Bin INT;
